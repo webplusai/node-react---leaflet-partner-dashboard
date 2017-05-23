@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"leaflets._Product"},{"v":1,"unique":true,"key":{"productIdentifier":1},"name":"productIdentifier_1","ns":"leaflets._Product"}]}

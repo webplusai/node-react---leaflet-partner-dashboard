@@ -1,0 +1,7 @@
+.idea
+.env
+node_modules
+npm-debug.log
+log
+public/build
+public/uploads

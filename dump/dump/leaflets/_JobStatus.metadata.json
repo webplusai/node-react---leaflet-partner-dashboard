@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"leaflets._JobStatus"},{"v":1,"key":{"expiresAt":1},"name":"expiresAt_1","ns":"leaflets._JobStatus","expireAfterSeconds":1}]}

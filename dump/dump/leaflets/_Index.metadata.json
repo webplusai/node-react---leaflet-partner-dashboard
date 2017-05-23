@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"leaflets._Index"},{"v":1,"key":{"className":1,"action":1},"name":"className_1_action_1","ns":"leaflets._Index","background":true},{"v":1,"key":{"expiresAt":1},"name":"expiresAt_1","ns":"leaflets._Index","background":true,"expireAfterSeconds":1}]}

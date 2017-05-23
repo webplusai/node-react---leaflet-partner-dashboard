@@ -1,0 +1,57 @@
+#page-wrapper {
+  min-height: 100vh;
+}
+
+.icon {
+  background: url(../img/logo.png) no-repeat center center;
+  background-size: contain;
+  height: 50px;
+}
+
+.icon:focus,
+.icon:hover {
+  background-color: transparent !important;
+}
+
+input[type=checkbox].form-control-checkbox {
+  margin: 4px 5px 0px 0px;
+}
+
+input[type=radio].form-control-checkbox {
+  margin: 4px 5px 0px 0px;
+}
+
+.wide-td {
+  min-width: 130px;
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: auto;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    width: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    width: auto;
+  }
+}
+
+.balance-label {
+  padding: 20px 40px 10px;
+}
+
+h2.logo-name {
+  font-size: 142px;
+  text-align: center;
+}
+
+.login-page {
+  height: 100%;
+}
