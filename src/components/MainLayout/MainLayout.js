@@ -4,15 +4,19 @@ import includes from 'lodash/includes';
 
 import { validateToken, logoutUser } from '../../actions/AuthActions';
 import { fetchBalance } from '../../actions/PaymentMethodActions'
+import { fetchLocations } from '../../actions/LocationActions';
 
 import { Header, Footer } from '../../components';
 
 class MainLayout extends Component {
 
   static propTypes = {
+
     children: PropTypes.node.isRequired,
       fetchBalance: PropTypes.func.isRequired,
-      balance: PropTypes.number
+      fetchLocations: PropTypes.func.isRequired,
+      balance: PropTypes.number,
+      currentUser: PropTypes.object,
   };
 
   state = {
@@ -21,24 +25,36 @@ class MainLayout extends Component {
 
   componentWillMount() {
 
-    const { validateToken, fetchBalance, currentUser } = this.props;
+    const { validateToken, currentUser, locations, fetchBalance, fetchLocations } = this.props;
 
-      validateToken().then(() => this.setState({ fetched: true }));
-    if (currentUser !== null && currentUser.stripe_customer_id !== null && currentUser.stripe_customer_id !== undefined
-        && this.props.currentUser.stripe_customer_id.length > 5) {
-        fetchBalance(this.props.currentUser)
-            .then(() => this.setState({fetched: true}))
-            .catch(err => {
-                console.log(err);
-            })
-    }
+      validateToken().then((data) => {
+      /*
+          if (currentUser !== null && currentUser.stripe_customer_id !== null && currentUser.stripe_customer_id !== undefined
+              && this.props.currentUser.stripe_customer_id.length > 5) {
+              fetchBalance(this.props.currentUser)
+                  .then(() => this.setState({fetched: true}))
+                  .catch(err => {
+                      console.log(err);
+                  });
 
+              console.log('componentWillMount');
+
+              Promise.all([
+                  fetchLocations({})
+              ]).then(() => {
+                  console.log(locations);
+              });
+          }
+      */
+        this.setState({ fetched: true })
+      });
 
   }
 
   render() {
-    const { isAuthenticated, currentUser, logoutUser, balance } = this.props;
+    const { isAuthenticated, currentUser, logoutUser, balance, location } = this.props;
     const { fetched } = this.state;
+    console.log(location);
 
     document.body.classList.toggle('gray-bg', false);
 
@@ -60,10 +76,17 @@ class MainLayout extends Component {
 
                 <div className="row">
                   <div className="col-md-6">
-
+                      {isAuthenticated ?
+                          (   <span>
+                              <h2>{location.name}</h2>
+                              <h3>Balance: ${balance}</h3>
+                              </span>
+                          )
+                          : null
+                      }
                   </div>
                   <div className="col-md-6 text-right balance-label">
-                    <h3>Balance: ${balance}</h3>
+
                   </div>
                 </div>
 
@@ -93,5 +116,7 @@ export default connect(({
     isAuthenticated,
     currentUser
   },
-  paymentMethods: { balance }
-}) => ({ balance, isAuthenticated, currentUser }), { validateToken, logoutUser, fetchBalance })(MainLayout);
+  paymentMethods: { balance },
+  locations: { item: location }
+}) => ({ balance, isAuthenticated, currentUser, location }), { validateToken, logoutUser, fetchBalance, fetchLocations })(MainLayout);
+

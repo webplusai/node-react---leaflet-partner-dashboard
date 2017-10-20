@@ -31,10 +31,11 @@ function Dashboard({ isAuthenticated, errorMessage, currentUser, facebookLoginUs
       {isAuthenticated && currentUser.is_admin ? <DataTable /> : null}
       {isAuthenticated && currentUser.is_partner ? (
         <div className="row">
+
           <div className="col-md-12">
 
               {
-                  currentUser.verified == 1 ? null :
+                  currentUser.verified === 1 ? null :
 
                   <div className="row m-b">
                     <div className="col-md-12">

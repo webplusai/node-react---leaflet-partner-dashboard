@@ -9,6 +9,7 @@ const defaultState = {
 export default function AuthReducer(state = defaultState, { type, currentUser, errorMessage, verifyMessage }) {
   switch (type) {
     case AUTH_USER:
+      console.log(currentUser);
       return { ...state, isAuthenticated: true, currentUser };
     case UPDATE_CURRENT_USER:
       return { ...state, currentUser };

@@ -3,6 +3,8 @@ import Promise from 'bluebird';
 import cookie from 'react-cookie';
 import { Base64 } from 'js-base64';
 import { browserHistory } from 'react-router';
+import { fetchBalance } from './PaymentMethodActions'
+import { fetchLocation } from './LocationActions';
 
 import { AUTH_USER, LOGOUT_USER, AUTH_ERROR, VERIFY_MESSAGE } from '../constants/Auth';
 
@@ -43,7 +45,18 @@ export function validateToken() {
     if (email && accessToken) {
       if (!!is_partner) {
         return apiRequest.authToken(accessToken)
-          .then(({ data: { token, user } }) => dispatch(authUser({ email, accessToken: token, currentUser: user })))
+          .then(({ data: { token, user } }) => {
+            console.log(user);
+
+            dispatch(fetchBalance(user));
+
+            if(user.location && user.location.objectId){
+                console.log(user.location);
+                fetchLocation(user.location.objectId);
+            }
+
+            dispatch(authUser({ email, accessToken: token, currentUser: user }))
+          })
           .catch(() => dispatch(authError('Bad Login Info')));
       }
 
@@ -105,6 +118,7 @@ export function signupUser(user) {
     business
   })
     .then(({ data: { token, user } }) => {
+
       dispatch(authUser({ email: user.email, accessToken: token, currentUser: user }));
       browserHistory.push('/');
     })
