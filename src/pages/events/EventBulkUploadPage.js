@@ -24,6 +24,6 @@ class EventBulkUploadPage extends Component {
 }
 
 export default connect(({
-                            auth: { currentUser },
-                            events: { errorMessage }
-                        }) => ({ errorMessage, currentUser }), { batchCreateEvents })(EventBulkUploadPage);
+        auth: { currentUser },
+        events: { errorMessage }
+    }) => ({ errorMessage, currentUser }), { batchCreateEvents })(EventBulkUploadPage);

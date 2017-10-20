@@ -14,7 +14,7 @@ export default (
   <Route path="events">
     <IndexRoute component={RequireAuth(EventsIndexPage)} />
     <Route path="new" component={RequireAuth(EventAddPage)} />
-      <Route path="bulkupload" component={RequireAuth(EventBulkUploadPage)} />
+    <Route path="bulkupload" component={RequireAuth(EventBulkUploadPage)} />
     <Route path=":itemID/edit" component={RequireAuth(EventEditPage)} />
     <Route path=":itemID/delete" component={RequireAuth(EventDeletePage)} />
     <Route path=":itemID" component={RequireAuth(EventShowPage)} />
