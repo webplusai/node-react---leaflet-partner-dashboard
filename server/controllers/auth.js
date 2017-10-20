@@ -7,12 +7,15 @@ const axios = require('axios');
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('jwt-simple');
 const Promise = require('bluebird');
+const random = require('randomstring');
 
 const config = require('../../config');
 
 const stripe = require('stripe')(config.stripeApiKey);
 
 const Partner = require('../models/partner');
+const mailgun = require('../utils/mail');
+const MailComposer = require('nodemailer/lib/mail-composer');
 
 const headers = {
   'X-Parse-Application-Id': config.parseApplicationId,
@@ -64,6 +67,44 @@ function persistLocation({ business }) {
   });
 }
 
+function sendVerificationEmail(user){
+
+    const link = config.emailVerificationURI +'/' + user.verification_code ;
+
+    const title = 'Please verify your email address';
+    const body = `
+        Hi ${user.first_name},
+        <p>Please click the link below to verify your email address.<br/>
+        <a href="${link}">Verify</a></p>
+        <p>Or paste the following link in your browser:<br/> ${link}</p>
+        If you weren't expecting this email from Leaf, please ignore this message.
+    `;
+
+
+    let messageOptions = {
+        to: user.email,
+        subject: title,
+        html: body
+    };
+
+    const mail = new MailComposer(messageOptions);
+    mail.compile().build((err, message)=>{
+        let dataToSend = {
+            to: user.email,
+            message: message.toString('ascii')
+        };
+
+        mailgun.messages().sendMime(dataToSend, (sendError, body) => {
+            if (sendError) {
+                console.log(sendError);
+                return;
+            }
+            console.log(body);
+        });
+    })
+
+}
+
 exports.token = function (req, res) {
   axios.get(`${config.parseHostURI}/Partner/${req.user.get('_id')}`, { headers })
     .then(({ data }) => {
@@ -86,6 +127,44 @@ exports.token = function (req, res) {
 exports.signin = function(req, res) {
   res.send({ token: tokenForPartner(req.user), user: req.user });
 };
+
+exports.verify = function(req, res) {
+    const code = req.params.code;
+    Partner.findOne({ verification_code: code }, (err, existingPartner) => {
+        if (err) { return next(err); }
+
+        if (existingPartner) {
+
+            if(existingPartner.get('verified') === 1){
+                return res.status(200).send('You have already verified your email adress.');
+            }
+            else{
+
+                let existingPartnerData = {...existingPartner._doc};
+
+                delete existingPartnerData._id;
+                delete existingPartnerData._created_at;
+                delete existingPartnerData._updated_at;
+                existingPartnerData.verified = 1;
+
+                console.log(existingPartnerData);
+
+                axios.put(`${config.parseHostURI}/Partner/${existingPartner.get('_id')}`, existingPartnerData, { headers })
+                    .then(()=>{
+                        return res.status(200).send('You have successfully verified your email adress.');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        return res.status(500).send('Unexpected error - ' + err.message);
+                    });
+            }
+
+        }
+        else{
+            return res.status(422).send({ error: 'The record was not found' });
+        }
+    });
+}
 
 exports.signup = function({
   body: {
@@ -110,6 +189,9 @@ exports.signup = function({
     }
   });
 
+
+  const verficationCode = random.generate(16);
+
   bcrypt.genSalt(10, function(err, salt) {
     if (err) { return next(err); }
 
@@ -129,13 +211,20 @@ exports.signup = function({
                 personal_phone,
                 job_title,
                 location,
-                stripe_customer_id: customer.id
+
+                stripe_customer_id: customer.id,
+                  verified: 0, //Added by Dayong,
+                  verification_code: verficationCode
               }, { headers })
                 .then(({ data }) => axios.get(`${config.parseHostURI}/Partner?where=${JSON.stringify({ email })}`, { headers })
-                  .then(response => res.json({
-                    token: tokenForPartner(data),
-                    user: omit(first(response.data.results), 'password') || data
-                  }))
+                  .then(response => {
+                      sendVerificationEmail(omit(first(response.data.results), 'password') || data);
+
+                      res.json({
+                          token: tokenForPartner(data),
+                          user: omit(first(response.data.results), 'password') || data
+                      })
+                  })
                   .catch(err1 => res.status(500).json({ err1: console.log('err1', err1), error: 'Something went wrong' })))
                 .catch(err2 => res.status(500).json({ err2: console.log('err2', err2), error: 'Something went wrong' }))
             )

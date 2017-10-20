@@ -1,4 +1,4 @@
-import { ADD_PAYMENT_METHODS, ADD_PAYMENT_HISTORY, ADD_PAYMENT_METHOD, PAYMENT_METHOD_ERROR, SHOW_PAYMENT_METHOD, REMOVE_PAYMENT_METHOD } from '../constants/PaymentMethod';
+import { ADD_PAYMENT_METHODS, ADD_PAYMENT_HISTORY, ADD_PAYMENT_METHOD, PAYMENT_METHOD_ERROR, SHOW_PAYMENT_METHOD, REMOVE_PAYMENT_METHOD, GET_BALANCE_METHOD } from '../constants/PaymentMethod';
 
 const defaultState = {
   items: [],
@@ -6,7 +6,7 @@ const defaultState = {
   errorMessage: null
 };
 
-export default function PaymentMethodReducer(state = defaultState, { type, items, count, has_more, item, itemId, errorMessage }) {
+export default function PaymentMethodReducer(state = defaultState, { type, items, count, has_more, item, itemId, balance, errorMessage }) {
   switch (type) {
     case ADD_PAYMENT_METHODS:
       return {
@@ -29,6 +29,13 @@ export default function PaymentMethodReducer(state = defaultState, { type, items
           ...state.items,
           item
         ]
+      };
+
+      case GET_BALANCE_METHOD: {
+        return {
+            ...state,
+            balance
+        }
       };
 
     case PAYMENT_METHOD_ERROR:

@@ -32,6 +32,27 @@ function Dashboard({ isAuthenticated, errorMessage, currentUser, facebookLoginUs
       {isAuthenticated && currentUser.is_partner ? (
         <div className="row">
           <div className="col-md-12">
+
+              {
+                  currentUser.verified == 1 ? null :
+
+                  <div className="row m-b">
+                    <div className="col-md-12">
+
+                        <div className="alert alert-info">
+                          <strong>Verify your email </strong>
+                          An email containing a unique link was sent to your email account <i>{currentUser.email}</i>. Click the link provided in this email message to finish verifying your email address. The web page which then launches will confirm your success.
+
+                        </div>
+
+
+                    </div>
+                  </div>
+
+
+              }
+
+
             <div className="row m-b">
               <div className="col-md-12">
                 <div className="ibox-content text-center">
@@ -41,6 +62,7 @@ function Dashboard({ isAuthenticated, errorMessage, currentUser, facebookLoginUs
                 </div>
               </div>
             </div>
+
 
             <div className="row">
               <div className="col-md-6">

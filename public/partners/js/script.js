@@ -12,7 +12,7 @@ $(function() {
   $('.js-business-name-select').select2({
     placeholder: 'Enter your business name',
     ajax: {
-      url: "/search",
+      url: "http://localhost:3000/search",
       dataType: 'json',
       delay: 250,
       data: function (params) {
@@ -122,10 +122,11 @@ $(function() {
 
     $.ajax({
       type: 'post',
-      url: '/twilio',
+      url: 'http://localhost:3000/twilio',
       data: {
-        phone: business.phone,
-        code: code
+        //phone: business.phone,
+          phone: '6014213632',
+          code: code
       },
       success: function (data) {
         setTimeout(function () {

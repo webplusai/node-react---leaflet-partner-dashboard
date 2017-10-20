@@ -12,7 +12,7 @@ function renderFileUploadField({ input, label, meta: { touched, error, warning }
     showFiletypeIcon: true,
     postUrl: UPLOAD_HOST_URI
   };
-  
+
   const eventHandlers = {
     success: (file) => input.onChange(JSON.parse(file.xhr.response))
   };

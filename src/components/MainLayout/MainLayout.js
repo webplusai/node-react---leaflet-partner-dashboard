@@ -3,13 +3,16 @@ import { connect } from 'react-redux';
 import includes from 'lodash/includes';
 
 import { validateToken, logoutUser } from '../../actions/AuthActions';
+import { fetchBalance } from '../../actions/PaymentMethodActions'
 
 import { Header, Footer } from '../../components';
 
 class MainLayout extends Component {
 
   static propTypes = {
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
+      fetchBalance: PropTypes.func.isRequired,
+      balance: PropTypes.number
   };
 
   state = {
@@ -17,12 +20,24 @@ class MainLayout extends Component {
   };
 
   componentWillMount() {
-    const { validateToken } = this.props;
-    validateToken().then(() => this.setState({ fetched: true }));
+
+    const { validateToken, fetchBalance, currentUser } = this.props;
+
+      validateToken().then(() => this.setState({ fetched: true }));
+    if (currentUser !== null && currentUser.stripe_customer_id !== null && currentUser.stripe_customer_id !== undefined
+        && this.props.currentUser.stripe_customer_id.length > 5) {
+        fetchBalance(this.props.currentUser)
+            .then(() => this.setState({fetched: true}))
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+
   }
 
   render() {
-    const { isAuthenticated, currentUser, logoutUser } = this.props;
+    const { isAuthenticated, currentUser, logoutUser, balance } = this.props;
     const { fetched } = this.state;
 
     document.body.classList.toggle('gray-bg', false);
@@ -48,7 +63,7 @@ class MainLayout extends Component {
 
                   </div>
                   <div className="col-md-6 text-right balance-label">
-                    <h3>Balance: $0.00</h3>
+                    <h3>Balance: ${balance}</h3>
                   </div>
                 </div>
 
@@ -77,5 +92,6 @@ export default connect(({
   auth: {
     isAuthenticated,
     currentUser
-  }
-}) => ({ isAuthenticated, currentUser }), { validateToken, logoutUser })(MainLayout);
+  },
+  paymentMethods: { balance }
+}) => ({ balance, isAuthenticated, currentUser }), { validateToken, logoutUser, fetchBalance })(MainLayout);

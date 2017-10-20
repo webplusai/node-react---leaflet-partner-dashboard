@@ -4,7 +4,7 @@ import cookie from 'react-cookie';
 import { Base64 } from 'js-base64';
 import { browserHistory } from 'react-router';
 
-import { AUTH_USER, LOGOUT_USER, AUTH_ERROR } from '../constants/Auth';
+import { AUTH_USER, LOGOUT_USER, AUTH_ERROR, VERIFY_MESSAGE } from '../constants/Auth';
 
 import { apiRequest } from '../utils';
 
@@ -25,6 +25,13 @@ export function authError(errorMessage) {
     type: AUTH_ERROR,
     errorMessage
   };
+}
+
+export function verifyMessage(message) {
+    return {
+        type: VERIFY_MESSAGE,
+        verifyMessage: message
+    };
 }
 
 export function validateToken() {
@@ -114,4 +121,18 @@ export function logoutUser() {
   return {
     type: LOGOUT_USER
   };
+}
+
+export function verifyEmail(code) {
+    console.log(code);
+    return dispatch => apiRequest.authVerifyEmail('verify', code)
+        .then(( message ) => {
+            console.log(message);
+            dispatch(verifyMessage(message.data));
+
+        })
+        .catch(response => {
+            console.log('catch', response);
+            dispatch(authError(response));
+        });
 }

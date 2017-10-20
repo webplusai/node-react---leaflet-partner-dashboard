@@ -19,6 +19,7 @@ const requireSignin = passport.authenticate('local', { session: false });
 module.exports = app => {
   app.post('/signin', requireSignin, authController.signin);
   app.post('/signup', authController.signup);
+  app.get('/verify/:code', authController.verify);
   app.get('/token', requireAuth, authController.token);
   app.get('/data', dataController);
   app.post('/upload', uploadController);
@@ -34,6 +35,7 @@ module.exports = app => {
   app.get('/twilio/calls/:id', twilioController.showCall);
   app.get('/search', searchController.index);
   app.get('/stripe/list', requireAuth, stripeController.list);
+  app.get('/stripe/:custId/balance', requireAuth, stripeController.getBalance);
   app.post('/stripe/week', requireAuth, stripeController.week);
   app.post('/stripe', requireAuth, stripeController.create);
   app.delete('/stripe/:id', requireAuth, stripeController.remove);

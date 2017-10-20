@@ -2,7 +2,7 @@ import pickBy from 'lodash/pickBy';
 import isNull from 'lodash/isNull';
 import { browserHistory } from 'react-router';
 
-import { ADD_PAYMENT_METHODS, ADD_PAYMENT_HISTORY, ADD_PAYMENT_METHOD, PAYMENT_METHOD_ERROR, SHOW_PAYMENT_METHOD, REMOVE_PAYMENT_METHOD } from '../constants/PaymentMethod';
+import { ADD_PAYMENT_METHODS, ADD_PAYMENT_HISTORY, ADD_PAYMENT_METHOD, PAYMENT_METHOD_ERROR, SHOW_PAYMENT_METHOD, REMOVE_PAYMENT_METHOD, GET_BALANCE_METHOD } from '../constants/PaymentMethod';
 
 import { apiRequest } from '../utils';
 
@@ -27,6 +27,14 @@ export function addPaymentMethod(item = {}) {
     type: ADD_PAYMENT_METHOD,
     item
   };
+}
+
+export function getBalance(balance = 0.0) {
+
+    return {
+        type: GET_BALANCE_METHOD,
+        balance: balance
+    };
 }
 
 export function paymentMethodError(errorMessage) {
@@ -79,6 +87,23 @@ export function fetchPaymentHistory({ search, include, order }) {
   const accessToken = localStorage.getItem('token');
   return dispatch => apiRequest.stripeGet(accessToken, 'list')
     .then(({ data: { invoices: { data, has_more } } }) => dispatch(addPaymentHistory(data, has_more)));
+}
+
+export function fetchBalance({ stripe_customer_id }) {
+    const accessToken = localStorage.getItem('token');
+
+
+
+        return dispatch => apiRequest.stripeGetBalance(accessToken, stripe_customer_id, 'balance')
+            .then((data) => {
+                    console.log(data);
+                    dispatch(getBalance(data.data));
+                }
+            )
+            .catch(({response: {data: {error}}}) => dispatch(paymentMethodError(error))
+            );
+
+
 }
 
 export function fetchPaymentMethod(itemId) {

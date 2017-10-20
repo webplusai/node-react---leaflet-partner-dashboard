@@ -21,8 +21,6 @@ module.exports.week = function(req, res, next) {
   axios.get(`${config.parseHostURI}/Boost?include="user"`, { headers })
     .then(({ data }) => {
 
-      console.log('data', data);
-
       res.json(data);
 
     })
@@ -41,6 +39,27 @@ module.exports.list = function (req, res, next) {
     }
   );
 };
+
+module.exports.getBalance = function (req, res, next) {
+    const { custId } = req.params;
+
+    stripe.customers.retrieve(
+        custId
+    ).then((customer) => {
+        if(customer.account_balance !== undefined && customer.account_balance !== null) {
+            console.log(customer.account_balance);
+            res.json(customer.account_balance)
+        }
+        else{
+            res.json(0.0);
+        }
+    }).catch(function(err) {
+        console.log('err', err);
+        res.status(500).json({ error: err})
+    });
+};
+
+
 
 module.exports.create = function(req, res) {
   const { number, exp_year, exp_month, cvc } = req.body;
