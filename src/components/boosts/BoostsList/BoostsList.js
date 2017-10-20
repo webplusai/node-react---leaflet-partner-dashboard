@@ -28,7 +28,7 @@ function BoostsList({ items }) {
         {items.map(({objectId, name, dates, start_time, end_time, with_max_budget, max_budget, approved, boost_type, createdAt}) => (
           <tr key={objectId}>
             <td>
-              <LinkTo url={`boosts/${objectId}`}>{name}</LinkTo>
+              {name}
             </td>
             <td>
               {size(dates || []) > 0 ? (

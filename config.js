@@ -4,6 +4,8 @@ module.exports = {
 
   mongodb: process.env.MONGODB,
 
+  emailVerificationURI: process.env.EMAIL_VERIFICATION_HOST,
+    
   // Auth
 
   authSecret: process.env.AUTH_SECRET,

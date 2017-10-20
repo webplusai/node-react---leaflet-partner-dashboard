@@ -16,7 +16,7 @@ export { BusinessProfile, BusinessProfileForm } from './business';
 export { ProfileForm } from './profile';
 export { BundlesList, BundleItem, BundleForm, BundleDelete } from './bundles';
 export { PlansList, PlanItem, PlanForm, PlanDelete } from './plans';
-export { EventsList, EventItem, EventForm, EventDelete } from './events';
+export { EventsList, EventItem, EventForm, EventBulkUploadForm, EventDelete } from './events';
 export { EventTypesList, EventTypeItem, EventTypeForm, EventTypeDelete } from './eventTypes';
 export { SpecialsList, SpecialItem, SpecialForm, SpecialDelete } from './specials';
 export { LocationsList, LocationItem, LocationForm, LocationDelete } from './locations';

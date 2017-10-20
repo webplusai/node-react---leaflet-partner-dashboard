@@ -3,8 +3,10 @@ import Promise from 'bluebird';
 import cookie from 'react-cookie';
 import { Base64 } from 'js-base64';
 import { browserHistory } from 'react-router';
+import { fetchBalance } from './PaymentMethodActions'
+import { fetchLocation } from './LocationActions';
 
-import { AUTH_USER, LOGOUT_USER, AUTH_ERROR } from '../constants/Auth';
+import { AUTH_USER, LOGOUT_USER, AUTH_ERROR, VERIFY_MESSAGE } from '../constants/Auth';
 
 import { apiRequest } from '../utils';
 
@@ -27,6 +29,13 @@ export function authError(errorMessage) {
   };
 }
 
+export function verifyMessage(message) {
+    return {
+        type: VERIFY_MESSAGE,
+        verifyMessage: message
+    };
+}
+
 export function validateToken() {
   const email = localStorage.getItem('email');
   const is_partner = localStorage.getItem('is_partner');
@@ -36,7 +45,18 @@ export function validateToken() {
     if (email && accessToken) {
       if (!!is_partner) {
         return apiRequest.authToken(accessToken)
-          .then(({ data: { token, user } }) => dispatch(authUser({ email, accessToken: token, currentUser: user })))
+          .then(({ data: { token, user } }) => {
+            console.log(user);
+
+            dispatch(fetchBalance(user));
+
+            if(user.location && user.location.objectId){
+                console.log(user.location);
+                fetchLocation(user.location.objectId);
+            }
+
+            dispatch(authUser({ email, accessToken: token, currentUser: user }))
+          })
           .catch(() => dispatch(authError('Bad Login Info')));
       }
 
@@ -98,6 +118,7 @@ export function signupUser(user) {
     business
   })
     .then(({ data: { token, user } }) => {
+
       dispatch(authUser({ email: user.email, accessToken: token, currentUser: user }));
       browserHistory.push('/');
     })
@@ -114,4 +135,18 @@ export function logoutUser() {
   return {
     type: LOGOUT_USER
   };
+}
+
+export function verifyEmail(code) {
+    console.log(code);
+    return dispatch => apiRequest.authVerifyEmail('verify', code)
+        .then(( message ) => {
+            console.log(message);
+            dispatch(verifyMessage(message.data));
+
+        })
+        .catch(response => {
+            console.log('catch', response);
+            dispatch(authError(response));
+        });
 }

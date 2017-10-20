@@ -24,7 +24,12 @@ class EventForm extends Component {
 
   state = {};
 
+
+
   componentDidMount() {
+
+      console.log(this.props);
+
     const { currentUser, fetchEventTypes, fetchLocations, fetchSpecials } = this.props;
 
     Promise.all([

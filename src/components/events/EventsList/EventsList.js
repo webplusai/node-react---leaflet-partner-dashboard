@@ -24,7 +24,7 @@ function EventsList({ items }) {
         {items.map(({ objectId, event_type, dates, start_time, end_time, location, redemption, cost, special, boost, createdAt }) => (
           <tr key={objectId}>
             <td>
-              {event_type ? <LinkTo url={`eventTypes/${event_type.objectId}`}>{event_type.name}</LinkTo> : null}
+              {event_type ? event_type.name : null}
             </td>
             <td>
               {size(dates || []) > 0 ? (

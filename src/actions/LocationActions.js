@@ -28,6 +28,7 @@ export function locationError(errorMessage) {
 }
 
 export function showLocation(item = {}) {
+  console.log(item);
   return {
     type: SHOW_LOCATION,
     item
@@ -75,9 +76,16 @@ export function fetchLocations({ search, include, order }) {
 }
 
 export function fetchLocation(itemId) {
+  console.log(itemId);
   return dispatch => apiRequest.get('Location', itemId, '?include="location_type"')
-    .then(({ data }) => dispatch(showLocation(data)))
-    .catch(() => browserHistory.push('/not-found'));
+    .then(({ data }) => {
+      console.log('return location', data);
+      dispatch(showLocation(data))
+    })
+    .catch((err) => {
+      console.log(err);
+      browserHistory.push('/not-found')
+    });
 }
 
 export function createLocation(location) {

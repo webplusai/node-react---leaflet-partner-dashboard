@@ -38,10 +38,12 @@ class EventsIndexPage extends Component {
       <Loading className="container" ignoreLoader={(
         <div className="row m-b">
           <h3 className="events-title">Events</h3>
-          <div className="col-md-2 pull-right">
-            <LinkTo button color="primary" url="events/new">Create Event</LinkTo>
+          <div className="col-md-4 pull-right">
+            <LinkTo button color="primary" url="events/new">Create Event</LinkTo>&nbsp;
+              <LinkTo button color="primary" url="events/bulkupload">Bulk Upload</LinkTo>
           </div>
-          <div className="col-md-4">
+
+          <div className="col-md-2">
             {fetched ? <h4>Events ({count})</h4> : null}
           </div>
           <div className="col-md-6 text-right">
